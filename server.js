@@ -18,21 +18,21 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Middlewares
-// const verifyToken = (req, res, next) => {
-//   let token = req.cookies?.accessToken;
-//   if (!token) {
-//     return res.status(401).send({ message: "unauthorized access" });
-//   }
-//   if (token) {
-//     jwt.verify(token, process.env.TOKEN_SECRET, (err, decode) => {
-//       if (err) {
-//         return res.status(403).send({ message: "Forbidden" });
-//       }
-//       req.user = decode;
-//       next();
-//     });
-//   }
-// };
+const verifyToken = (req, res, next) => {
+  let token = req.cookies?.accessToken;
+  if (!token) {
+    return res.status(401).send({ message: "unauthorized access" });
+  }
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, decode) => {
+      if (err) {
+        return res.status(403).send({ message: "Forbidden" });
+      }
+      req.user = decode;
+      next();
+    });
+  }
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.gef2z8f.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -64,10 +64,10 @@ async function run() {
     });
 
     // Clear Cookie from user's browser upon logging out API
-    // app.post("/clearCookie", async (req, res) => {
-    //   let user = req.body;
-    //   res.clearCookie("accessToken", { maxAge: 0 }).send({ success: true });
-    // });
+    app.post("/clearCookie", async (req, res) => {
+      let user = req.body;
+      res.clearCookie("accessToken", { maxAge: 0 }).send({ success: true });
+    });
 
     // Get categories Data (GET Method)
     app.get("/categories", async (req, res) => {
