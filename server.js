@@ -49,19 +49,19 @@ async function run() {
 
   try {
     // Token generation API
-    // app.post("/access-token", async (req, res) => {
-    //   let user = req.body;
-    //   const token = jwt.sign(user, process.env.TOKEN_SECRET, {
-    //     expiresIn: "1h",
-    //   });
-    //   res
-    //     .cookie("accessToken", token, {
-    //       httpOnly: true,
-    //       secure: true,
-    //       sameSite: "none",
-    //     })
-    //     .send({ success: true });
-    // });
+    app.post("/access-token", async (req, res) => {
+      let user = req.body;
+      const token = jwt.sign(user, process.env.TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
+      res
+        .cookie("accessToken", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .send({ success: true });
+    });
 
     // Clear Cookie from user's browser upon logging out API
     // app.post("/clearCookie", async (req, res) => {
