@@ -46,6 +46,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   const categoriesCollection = client.db("WorkVista").collection("categories");
+  const myBidsCollection = client.db("WorkVista").collection("myBids");
 
   try {
     // Token generation API
@@ -95,6 +96,17 @@ async function run() {
       } catch (error) {
         console.error("Error:", error);
         res.status(500).json({ message: "Internal Server Error" });
+      }
+    });
+
+    //Storing data to myBids collection
+    app.post("/myBids", async (req, res) => {
+      try {
+        await myBidsCollection.insertOne(req.body);
+        res.status(200).send("Data stored successfully");
+      } catch (error) {
+        console.error("Error storing data:", error);
+        res.status(500).send("Internal Server Error");
       }
     });
   } finally {
