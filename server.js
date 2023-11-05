@@ -109,6 +109,16 @@ async function run() {
         res.status(500).send("Internal Server Error");
       }
     });
+
+    // GET my bids data filtered by email
+    app.get("/myBids", async (req, res) => {
+      let email = req.query.email;
+      const cursor = myBidsCollection.find({ yourEmail: email });
+      let result = await cursor.toArray();
+      res.send(result);
+    });
+
+    //
   } finally {
   }
 }
