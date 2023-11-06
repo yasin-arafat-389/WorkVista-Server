@@ -166,6 +166,25 @@ async function run() {
       res.send(cursor);
     });
 
+    // PUT route for updating data
+    app.put("/categories/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedData = req.body;
+
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const result = await categoriesCollection.updateOne(
+          filter,
+          { $set: updatedData },
+          options
+        );
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: "Error updating data" });
+      }
+    });
+
     //
   } finally {
   }
