@@ -118,6 +118,14 @@ async function run() {
       res.send(result);
     });
 
+    // GET bid requests data filtered by email
+    app.get("/bidRequests", async (req, res) => {
+      let email = req.query.email;
+      const cursor = myBidsCollection.find({ buyerEmail: email });
+      let result = await cursor.toArray();
+      res.send(result);
+    });
+
     //
   } finally {
   }
@@ -129,5 +137,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`WrokVista Server listening on port ${port}`);
 });
