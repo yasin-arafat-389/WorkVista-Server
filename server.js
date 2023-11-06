@@ -143,6 +143,17 @@ async function run() {
       }
     });
 
+    // API to store data from add a job page
+    app.post("/categories", async (req, res) => {
+      try {
+        await categoriesCollection.insertOne(req.body);
+        res.status(200).send("Data stored successfully");
+      } catch (error) {
+        console.error("Error storing data:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+
     //
   } finally {
   }
