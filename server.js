@@ -130,10 +130,11 @@ async function run() {
     app.put("/bidRequests/:id", async (req, res) => {
       try {
         const itemId = req.params.id;
+        const { status } = req.body;
 
         await myBidsCollection.updateOne(
           { _id: new ObjectId(itemId) },
-          { $set: { status } }
+          { $set: { status: status } }
         );
 
         res.status(200).send("Status updated successfully");
@@ -154,6 +155,17 @@ async function run() {
       }
     });
 
+    //Get specific data for my posted jobs filtered by email
+    app.get("/myPosts", async (req, res) => {
+      let query = {};
+      let email = req.query.email;
+      if (email) {
+        query.email = email;
+      }
+      let cursor = await categoriesCollection.find(query).toArray();
+      res.send(cursor);
+    });
+
     //
   } finally {
   }
@@ -165,5 +177,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`WrokVista Server listening on port ${port}`);
+  console.log(`WorkVista Server listening on port ${port}`);
 });
