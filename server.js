@@ -126,6 +126,23 @@ async function run() {
       res.send(result);
     });
 
+    // Update status from bid requests API
+    app.put("/bidRequests/:id", async (req, res) => {
+      try {
+        const itemId = req.params.id;
+
+        await myBidsCollection.updateOne(
+          { _id: new ObjectId(itemId) },
+          { $set: { status } }
+        );
+
+        res.status(200).send("Status updated successfully");
+      } catch (error) {
+        console.error("Error updating status:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+
     //
   } finally {
   }
