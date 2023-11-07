@@ -185,6 +185,15 @@ async function run() {
       }
     });
 
+    // Delete API to delete a job
+    app.delete("/categories/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await categoriesCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
+
     //
   } finally {
   }
