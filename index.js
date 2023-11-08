@@ -71,7 +71,13 @@ async function run() {
     // Clear Cookie from user's browser upon logging out API
     app.post("/clearCookie", async (req, res) => {
       let user = req.body;
-      res.clearCookie("accessToken", { maxAge: 0 }).send({ success: true });
+      res
+        .clearCookie("accessToken", {
+          maxAge: 0,
+          sameSite: "none",
+          secure: true,
+        })
+        .send({ success: true });
     });
 
     // Get categories Data (GET Method)
