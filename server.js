@@ -87,7 +87,7 @@ async function run() {
     });
 
     // Get Specific job data for job details page (GET Method)
-    app.get("/categories/:id", async (req, res) => {
+    app.get("/categories/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       try {
         const query = { _id: new ObjectId(id) };
@@ -100,8 +100,14 @@ async function run() {
     });
 
     //Storing data to myBids collection
-    app.post("/myBids", async (req, res) => {
+    app.post("/myBids", verifyToken, async (req, res) => {
       try {
+        if (req.body.yourEmail !== req.user.email) {
+          return res.status(403).send({
+            message: "You are trying to get data you have no access to",
+          });
+        }
+
         await myBidsCollection.insertOne(req.body);
         res.status(200).send("Data stored successfully");
       } catch (error) {
@@ -110,16 +116,29 @@ async function run() {
       }
     });
 
-    // GET my bids data filtered by email
-    app.get("/myBids", async (req, res) => {
+    app.get("/myBids", verifyToken, async (req, res) => {
+      if (req.query.email !== req.user.email) {
+        return res.status(403).send({
+          message: "You are trying to get data you have no access to",
+        });
+      }
+
       let email = req.query.email;
-      const cursor = myBidsCollection.find({ yourEmail: email });
+      const cursor = myBidsCollection
+        .find({ yourEmail: email })
+        .sort({ status: 1 });
       let result = await cursor.toArray();
       res.send(result);
     });
 
     // GET bid requests data filtered by email
-    app.get("/bidRequests", async (req, res) => {
+    app.get("/bidRequests", verifyToken, async (req, res) => {
+      if (req.query.email !== req.user.email) {
+        return res.status(403).send({
+          message: "You are trying to get data you have no access to",
+        });
+      }
+
       let email = req.query.email;
       const cursor = myBidsCollection.find({ buyerEmail: email });
       let result = await cursor.toArray();
@@ -127,7 +146,7 @@ async function run() {
     });
 
     // Update status from bid requests API
-    app.put("/bidRequests/:id", async (req, res) => {
+    app.put("/bidRequests/:id", verifyToken, async (req, res) => {
       try {
         const itemId = req.params.id;
         const { status } = req.body;
@@ -145,8 +164,14 @@ async function run() {
     });
 
     // API to store data from add a job page
-    app.post("/categories", async (req, res) => {
+    app.post("/categories", verifyToken, async (req, res) => {
       try {
+        if (req.body.email !== req.user.email) {
+          return res.status(403).send({
+            message: "You are trying to get data you have no access to",
+          });
+        }
+
         await categoriesCollection.insertOne(req.body);
         res.status(200).send("Data stored successfully");
       } catch (error) {
@@ -156,7 +181,13 @@ async function run() {
     });
 
     //Get specific data for my posted jobs filtered by email
-    app.get("/myPosts", async (req, res) => {
+    app.get("/myPosts", verifyToken, async (req, res) => {
+      if (req.query.email !== req.user.email) {
+        return res.status(403).send({
+          message: "You are trying to get data you have no access to",
+        });
+      }
+
       let query = {};
       let email = req.query.email;
       if (email) {
@@ -186,15 +217,13 @@ async function run() {
     });
 
     // Delete API to delete a job
-    app.delete("/categories/:id", async (req, res) => {
+    app.delete("/categories/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const result = await categoriesCollection.deleteOne({
         _id: new ObjectId(id),
       });
       res.send(result);
     });
-
-    //
   } finally {
   }
 }
