@@ -1,12 +1,12 @@
 {
-  "name": "server-side-generic-folder",
+  "name": "work-vista",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon server.js"
+    "server": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",

@@ -10,7 +10,11 @@ const port = process.env.PORT || 5001;
 // Parser
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://workvista-167d6.web.app",
+      "https://workvista-167d6.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
