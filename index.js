@@ -23,19 +23,17 @@ app.use(cookieParser());
 
 // Middlewares
 const verifyToken = (req, res, next) => {
-  let token = req.cookies?.accessToken;
-  if (!token) {
+  if (!req.headers.authorization) {
     return res.status(401).send({ message: "unauthorized access" });
   }
-  if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, decode) => {
-      if (err) {
-        return res.status(403).send({ message: "Forbidden" });
-      }
-      req.user = decode;
-      next();
-    });
-  }
+  const token = req.headers.authorization.split(" ")[1];
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "unauthorized access" });
+    }
+    req.user = decoded;
+    next();
+  });
 };
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.gef2z8f.mongodb.net/?retryWrites=true&w=majority`;
@@ -57,27 +55,9 @@ async function run() {
     app.post("/access-token", async (req, res) => {
       let user = req.body;
       const token = jwt.sign(user, process.env.TOKEN_SECRET, {
-        expiresIn: "1h",
+        expiresIn: "365d",
       });
-      res
-        .cookie("accessToken", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        })
-        .send({ success: true });
-    });
-
-    // Clear Cookie from user's browser upon logging out API
-    app.post("/clearCookie", async (req, res) => {
-      let user = req.body;
-      res
-        .clearCookie("accessToken", {
-          maxAge: 0,
-          sameSite: "none",
-          secure: true,
-        })
-        .send({ success: true });
+      res.send({ token });
     });
 
     // Get categories Data (GET Method)
