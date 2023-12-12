@@ -1,6 +1,7 @@
 ## About Project
 
 - Project name:- WorkVista (Server side)
+- Type:- Online job marketplace
 
 # Technologies used
 
